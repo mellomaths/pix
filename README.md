@@ -1,13 +1,15 @@
 # Pix
 
-Requirements:
+Description:
 - Emulate transactions between banks and bank accounts based on specific keys like email, cpf or id.
 - Each bank account can register a Pix key.
 - If we have two differents bank accounts on the different banks, like A and B, the user of the bank account A can use the Pix key of the bank account B to transfer money from A to B.
 - No transaction can be lost if Pix is not running.
 - No transaction can be lost if the destination bank is not working.
 
-## About banks
+## Functional requirements
+
+### About banks
 
 Requirements:
 - A bank is a microservice that allows the user to create bank account and Pix keys, and also transfer.
@@ -15,7 +17,7 @@ Requirements:
 - Nest.js will be used on backend.
 - Next.js, based on React, will be used on frontend.
 
-## About Pix
+### About Pix
 
 Requirements:
 - A microservice responsible to be in the middle, the center of all bank account transfer.
@@ -34,3 +36,25 @@ Requirements:
   
 <br></br>
 ![Pix flow](/docs/pix.jpg "Pix flow")
+
+### Challenges
+
+- Fast and efficient communication.
+- Pix creation and searches operations should be immediate (synchronous)
+- The application should guarantee that no transaction would be lost, even if any of those 3 systems are not running. That means that the communication of transfer transactions should be asynchronous.
+
+
+Definitions:
+- For synchronous operations, we are going to use **gRPC**.
+- For asynchronous operations, we are going to use **Apache Kafka**.
+
+## Technical requirements
+
+### About Pix
+
+Requirements:
+- Should be able to act as a gRPC server.
+- Should consume/subscribe and publish messages with Apache Kafka.
+- Those two operations, synchronous and asynchronous should work simultaneously.
+- In order to be domain driven designed, it should have a "application layer" responsible to technical complexity (gRPC server and Kafka) and it should be flexible to be implemented others clients like API REST, CLI and others without changing the core domain or others components of the application.
+
