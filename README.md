@@ -32,3 +32,5 @@ Requirements:
   - Receive the confirmation of the bank A.
   - Update status of the transfer to "completed". 
   
+<br></br>
+![Pix flow](/docs/pix.jpg "Pix flow")
