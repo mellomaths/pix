@@ -11,7 +11,7 @@ type TransactionRepositoryDb struct {
 	Db *gorm.DB
 }
 
-func (repository *TransactionRepositoryDb) Register(transaction *model.Transaction) error {
+func (repository *TransactionRepositoryDb) RegisterTransaction(transaction *model.Transaction) error {
 	err := repository.Db.Create(transaction).Error
 	if err != nil {
 		return err
@@ -19,7 +19,7 @@ func (repository *TransactionRepositoryDb) Register(transaction *model.Transacti
 	return nil
 }
 
-func (repository *TransactionRepositoryDb) Save(transaction *model.Transaction) error {
+func (repository *TransactionRepositoryDb) SaveTransaction(transaction *model.Transaction) error {
 	err := repository.Db.Save(transaction).Error
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func (repository *TransactionRepositoryDb) Save(transaction *model.Transaction) 
 	return nil
 }
 
-func (repository *TransactionRepositoryDb) Find(id string) (*model.Transaction, error) {
+func (repository *TransactionRepositoryDb) FindTransaction(id string) (*model.Transaction, error) {
 	var transaction model.Transaction
 	repository.Db.Preload("AccountFrom.Bank").First(&transaction, "id = ?", id)
 
