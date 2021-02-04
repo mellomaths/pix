@@ -44,10 +44,11 @@ func (pixKey *PixKey) isValid() error {
 
 func NewPixKey(kind string, account *Account, key string) (*PixKey, error) {
 	pixKey := PixKey{
-		Kind:    kind,
-		Account: account,
-		Key:     key,
-		Status:  "active",
+		Kind:      kind,
+		Account:   account,
+		AccountID: account.ID,
+		Key:       key,
+		Status:    "active",
 	}
 
 	pixKey.ID = uuid.NewV4().String()
