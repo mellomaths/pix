@@ -96,7 +96,7 @@ func (transaction *Transaction) Confirm() error {
 
 func (transaction *Transaction) Cancel(description string) error {
 	transaction.Status = TransactionError
-	transaction.Description = description
+	transaction.CancelDescription = description
 	transaction.UpdatedAt = time.Now()
 	err := transaction.isValid()
 	return err
