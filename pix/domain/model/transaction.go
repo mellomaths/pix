@@ -69,3 +69,25 @@ func NewTransaction(accountFrom *Account, amount float64, pixKeyTo *PixKey, desc
 
 	return &transaction, nil
 }
+
+func (transaction *Transaction) Complete() error {
+	transaction.Status = TransactionCompleted
+	transaction.UpdatedAt = time.Now()
+	err := transaction.isValid()
+	return err
+}
+
+func (transaction *Transaction) Confirm() error {
+	transaction.Status = TransactionConfirmed
+	transaction.UpdatedAt = time.Now()
+	err := transaction.isValid()
+	return err
+}
+
+func (transaction *Transaction) Cancel(description string) error {
+	transaction.Status = TransactionError
+	transaction.Description = description
+	transaction.UpdatedAt = time.Now()
+	err := transaction.isValid()
+	return err
+}
