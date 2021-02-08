@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"log"
+
 	"github.com/mellomaths/pix/domain/model"
 )
 
@@ -25,6 +27,22 @@ func (t *TransactionUseCase) RegisterTransaction(accountId string, amount float6
 		return nil, err
 	}
 
+	err = t.TransactionRepository.SaveTransaction(transaction)
+	if err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
+}
+
+func (t *TransactionUseCase) ConfirmTransaction(transactionId string) (*model.Transaction, error) {
+	transaction, err := t.TransactionRepository.FindTransaction(transactionId)
+	if err != nil {
+		log.Println("Transaction not found", transactionId)
+		return nil, err
+	}
+
+	transaction.Confirm()
 	err = t.TransactionRepository.SaveTransaction(transaction)
 	if err != nil {
 		return nil, err
