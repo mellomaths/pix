@@ -66,3 +66,19 @@ func (t *TransactionUseCase) CompleteTransaction(transactionId string) (*model.T
 
 	return transaction, nil
 }
+
+func (t *TransactionUseCase) CancelTransaction(transactionId string, reason string) (*model.Transaction, error) {
+	transaction, err := t.TransactionRepository.FindTransaction(transactionId)
+	if err != nil {
+		log.Println("Transaction not found", transactionId)
+		return nil, err
+	}
+
+	transaction.Cancel(reason)
+	err = t.TransactionRepository.SaveTransaction(transaction)
+	if err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
+}
