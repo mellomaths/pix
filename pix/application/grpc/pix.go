@@ -5,7 +5,6 @@ import (
 
 	"github.com/mellomaths/pix/application/grpc/pb"
 	"github.com/mellomaths/pix/application/usecase"
-	"google.golang.org/grpc"
 )
 
 type PixGrpcService struct {
@@ -13,7 +12,7 @@ type PixGrpcService struct {
 	pb.UnimplementedPixServiceServer
 }
 
-func (p *PixGrpcService) RegisterPixKey(ctx context.Context, in *pb.PixKeyRegistration, opts ...grpc.CallOption) (*pb.PixKeyCreatedResult, error) {
+func (p *PixGrpcService) RegisterPixKey(ctx context.Context, in *pb.PixKeyRegistration) (*pb.PixKeyCreatedResult, error) {
 	pixKey, err := p.PixUseCase.RegisterKey(in.Key, in.Kind, in.AccountId)
 	if err != nil {
 		return &pb.PixKeyCreatedResult{
@@ -28,7 +27,7 @@ func (p *PixGrpcService) RegisterPixKey(ctx context.Context, in *pb.PixKeyRegist
 	}, nil
 }
 
-func (p *PixGrpcService) Find(ctx context.Context, in *pb.PixKey, opts ...grpc.CallOption) (*pb.PixKeyInfo, error) {
+func (p *PixGrpcService) Find(ctx context.Context, in *pb.PixKey) (*pb.PixKeyInfo, error) {
 	pixKey, err := p.PixUseCase.FindKey(in.Key, in.Kind)
 	if err != nil {
 		return &pb.PixKeyInfo{}, err
@@ -48,4 +47,10 @@ func (p *PixGrpcService) Find(ctx context.Context, in *pb.PixKey, opts ...grpc.C
 		},
 		CreatedAt: pixKey.CreatedAt.String(),
 	}, nil
+}
+
+func NewPixGrpcService(usecase usecase.PixUseCase) *PixGrpcService {
+	return &PixGrpcService{
+		PixUseCase: usecase,
+	}
 }
