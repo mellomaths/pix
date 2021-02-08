@@ -11,13 +11,13 @@ type PixKeyRepositoryDb struct {
 	Db *gorm.DB
 }
 
-func (repository PixKeyRepositoryDb) RegisterKey(pixKey *model.PixKey) (*model.PixKey, error) {
+func (repository PixKeyRepositoryDb) RegisterKey(pixKey *model.PixKey) error {
 	err := repository.Db.Create(pixKey).Error
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return pixKey, nil
+	return nil
 }
 
 func (repository PixKeyRepositoryDb) FindKeyByKind(key string, kind string) (*model.PixKey, error) {
