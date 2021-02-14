@@ -3,7 +3,8 @@ package model
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-playground/validator/v10"
+
+	validator "github.com/go-playground/validator/v10"
 )
 
 type Transaction struct {
@@ -49,7 +50,7 @@ func (t *Transaction) ToJson() ([]byte, error) {
 
 	result, err := json.Marshal(t)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	return result, nil
