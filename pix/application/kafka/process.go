@@ -115,6 +115,8 @@ func (processor *KafkaProcessor) processTransactionConfirmation(msg *ckafka.Mess
 			return err
 		}
 	}
+
+	return nil
 }
 
 func (processor *KafkaProcessor) confirmTransaction(transaction *applicationModel.Transaction, transactionUseCase usecase.TransactionUseCase) error {
