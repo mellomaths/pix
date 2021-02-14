@@ -5,6 +5,8 @@ import (
 
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/jinzhu/gorm"
+	"github.com/mellomaths/pix/application/factory"
+	applicationModel "github.com/mellomaths/pix/application/model"
 )
 
 type KafkaProcessor struct {
@@ -40,6 +42,58 @@ func (processor *KafkaProcessor) Consume() {
 		msg, err := consumer.ReadMessage(-1)
 		if err == nil {
 			fmt.Println(string(msg.Value))
+			processor.processMessage(msg)
 		}
 	}
+}
+
+func (processor *KafkaProcessor) processMessage(msg *ckafka.Message) {
+	transactionsTopic := "transactions"
+	// transactionConfirmationTopic := "transaction_confirmation"
+
+	switch topic := *msg.TopicPartition.Topic; topic {
+	case transactionsTopic:
+		processor.processTransaction(msg)
+	// case transactionConfirmationTopic:
+	default:
+		fmt.Println("not a valid topic", string(msg.Value))
+	}
+}
+
+func (processor *KafkaProcessor) processTransaction(msg *ckafka.Message) error {
+	transaction := applicationModel.NewTransaction()
+	err := transaction.ParseJson(msg.Value)
+	if err != nil {
+		return err
+	}
+
+	transactionUseCase := factory.TransactionUseCaseFactory(processor.Database)
+	createdTransaction, err := transactionUseCase.RegisterTransaction(
+		transaction.AccountID,
+		transaction.Amount,
+		transaction.PixKeyTo,
+		transaction.PixKeyKindTo,
+		transaction.Description,
+	)
+
+	if err != nil {
+		fmt.Println("error registering transaction", err)
+		return err
+	}
+
+	topic := "bank" + createdTransaction.PixKeyTo.Account.Bank.Code
+	transaction.ID = createdTransaction.ID
+	transaction.Status = createdTransaction.Status
+
+	transactionJson, err := transaction.ToJson()
+	if err != nil {
+		return err
+	}
+
+	err = Publish(string(transactionJson), topic, processor.Producer, processor.DeliveryChannel)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
