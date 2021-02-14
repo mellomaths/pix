@@ -18,6 +18,7 @@ package cmd
 import (
 	"fmt"
 
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/mellomaths/pix/application/kafka"
 	"github.com/spf13/cobra"
 )
@@ -29,7 +30,9 @@ var kafkaCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Producing new message")
 		producer := kafka.NewKafkaProducer()
-		kafka.Publish("Hello Kafka", "test", producer)
+		deliveryChannel := make(chan ckafka.Event)
+		kafka.Publish("Hello Kafka", "test", producer, deliveryChannel)
+		kafka.DeliveryReport(deliveryChannel)
 	},
 }
 
