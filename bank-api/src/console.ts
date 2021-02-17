@@ -10,6 +10,7 @@ bootstrap.init().then(async app => {
     try {
         await app.init();
         await bootstrap.boot();
+        process.exit(0);
     } catch (e) {
         console.error(e);
         process.exit(1);
