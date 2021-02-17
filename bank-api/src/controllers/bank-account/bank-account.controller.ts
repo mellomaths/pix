@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BankAccount } from 'src/models/bank-account';
 import { Repository } from 'typeorm';
@@ -18,8 +18,10 @@ export class BankAccountController {
         return this.bankAccountRepository.find();
     }
 
-    @Get()
-    show() {
-
+    @Get(':bankAccountId')
+    show(
+        @Param('bankAccountId') bankAccountId: string
+    ) {
+        return this.bankAccountRepository.findOneOrFail(bankAccountId);
     }
 }
