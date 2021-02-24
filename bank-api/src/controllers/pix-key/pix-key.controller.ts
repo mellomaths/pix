@@ -1,10 +1,29 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PixKey } from 'src/models/pix-key.model';
+import { Repository } from 'typeorm';
 
-@Controller('pix-key')
+@Controller('bank-accounts/:bankAccountId/pix-keys')
 export class PixKeyController {
 
+    constructor(
+        @InjectRepository(PixKey)
+        private pixKeyRepository: Repository<PixKey>,
+    ) {}
+
     @Get()
-    index() {}
+    index(
+        @Param('bankAccountId', new ParseUUIDPipe({ version: '4' })) bankAccountId: string
+    ) {
+        return this.pixKeyRepository.find({
+            where: {
+                bank_account_id: bankAccountId,
+            },
+            order: {
+                created_at: 'DESC'
+            }
+        });
+    }
 
     @Post()
     store() {}
