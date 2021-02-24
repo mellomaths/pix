@@ -11,11 +11,10 @@ services:
       - "host.docker.internal:172.17.0.1"
 
   db:
-    image: postgres:9.4
-    restart: always
+    build: .docker/postgres
     tty: true
     volumes:
-      - .pgdata:/var/lib/postgresql/data
+      - .docker/dbdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=pix
